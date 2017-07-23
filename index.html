@@ -53,16 +53,20 @@
 
 <p>You knew whether your flight was going to be cancelled or delayed BEFORE you booked it?</p>
 
+<p>Flight Explorer is a new application that allows you to see the past arrival delays and cancellations of your flight!</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-2" style="background:;">
   <hgroup>
-    <h2>Flight Explorer</h2>
+    <h2>Using Transit Bureau Data</h2>
   </hgroup>
   <article data-timings="">
-    <p>Flight Explorer is a new application that allows you to see the past arrival delays and cancellations of your flight!</p>
+    <p>Behind and intuitive user interface, Flight Explorer uses transportation bureau data from the prior 12 months to give you the information you need to have delay free travel.</p>
+
+<p><img src="FlightExplorer.png" alt="Flight Explorer UI"></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -70,10 +74,24 @@
 
 <slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>Using Transit Bureau Data</h2>
+    <h2>Summarized Flight Data</h2>
   </hgroup>
   <article data-timings="">
-    <p>Behind and intuitive user interface, Flight Explorer uses transit bureau data from the prior 12 months to give you the information you need to have delay free travel.</p>
+    <p>Individual Files from the Transportation Bureau were consolidated and summarized for use in the application</p>
+
+<pre><code class="r">library(dplyr)
+
+dfFlightData &lt;- NULL
+for(i in 1:13){
+        f.path &lt;- file.path(getwd(), paste0(&quot;902002334_T_ONTIME &quot;
+                ,&quot;(&quot;, as.character(i),&quot;)&quot;), &quot;902002334_T_ONTIME.csv&quot;)
+        dfFlights &lt;- read.csv(f.path)
+        if(is.data.frame(dfFlightData)){
+                dfFlightData &lt;- rbind(dfFlights, dfFlightData)
+        }
+        else { dfFlightData &lt;- dfFlights }
+}
+</code></pre>
 
   </article>
   <!-- Presenter Notes -->
@@ -81,20 +99,42 @@
 
 <slide class="" id="slide-4" style="background:;">
   <hgroup>
-    <h2>Code Sample</h2>
+    <h3>Summarized Flight Data (Continued)</h3>
   </hgroup>
   <article data-timings="">
-    
+    <pre><code class="r">dfAirlines &lt;- read.csv(&quot;L_AIRLINE_ID.csv&quot;)
+names(dfAirlines) &lt;- c(&quot;AIRLINE_ID&quot;, &quot;AIRLINE_NAME&quot;)
+
+dfFlightData &lt;- merge(dfFlightData, dfAirlines, by.x = &quot;AIRLINE_ID&quot;, 
+                      by.y = &quot;AIRLINE_ID&quot;)
+dfFlightData &lt;- dfFlightData %&gt;% select(MONTH, DAY_OF_WEEK, AIRLINE_NAME, 
+                FL_NUM, ORIGIN_CITY_NAME, DEST_CITY_NAME, ARR_DELAY_NEW, CANCELLED)
+dfFlightSummary &lt;- dfFlightData %&gt;% group_by(MONTH, DAY_OF_WEEK, AIRLINE_NAME, 
+                FL_NUM, ORIGIN_CITY_NAME, DEST_CITY_NAME)
+dfFlightSummary &lt;- summarize(dfFlightSummary, 
+                             avg_delay = round(mean(ARR_DELAY_NEW, na.rm = TRUE),0), 
+                             pct_cancelled = round(100 * mean(CANCELLED, na.rm = TRUE),0))
+write.csv(dfFlightSummary, &quot;FlightSummaryData.csv&quot;, row.names = FALSE)
+</code></pre>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-5" style="background:;">
   <hgroup>
-    <h2>Links</h2>
+    <h2>May All Your Flights be Delay-Free</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>Shiny Application <a href="https://rougeone.shinyapps.io/FlightExplorer">https://rougeone.shinyapps.io/FlightExplorer</a></p>
+
+<p>Code Repo:<br>
+<a href="https://github.com/wayneheller/developingdataproducts/tree/gh-pages/final_project/FlightExplorer">https://github.com/wayneheller/developingdataproducts/tree/gh-pages/final_project/FlightExplorer</a></p>
+
+<p>Pitch Deck <a href="https://wayneheller.github.io/FlightExplorerPitch">https://wayneheller.github.io/FlightExplorerPitch</a></p>
+
+<p>Flight Data Source <a href="https://www.transtats.bts.gov/Fields.asp">https://www.transtats.bts.gov/Fields.asp</a></p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -111,25 +151,25 @@
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Flight Explorer'>
+        data-slide=2 title='Using Transit Bureau Data'>
          2
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Using Transit Bureau Data'>
+        data-slide=3 title='Summarized Flight Data'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Code Sample'>
+        data-slide=4 title='Summarized Flight Data (Continued)'>
          4
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='Links'>
+        data-slide=5 title='May All Your Flights be Delay-Free'>
          5
       </a>
     </li>
