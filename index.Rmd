@@ -29,7 +29,7 @@ Flight Explorer is a new application that allows you to see the past arrival del
 
 Behind and intuitive user interface, Flight Explorer uses transportation bureau data from the prior 12 months to give you the information you need to have delay free travel.
 
-![Flight Explorer UI](FlightExplorer.png)
+![image](FlightExplorer.PNG)
 
 ---
 
