@@ -29,48 +29,31 @@ Flight Explorer is a new application that allows you to see the past arrival del
 
 Behind and intuitive user interface, Flight Explorer uses transportation bureau data from the prior 12 months to give you the information you need to have delay free travel.
 
-![image](FlightExplorer.PNG)
+![Flight Explorer UI](FlightExplorer.PNG)
 
 ---
 
 ## Summarized Flight Data
-Individual Files from the Transportation Bureau were consolidated and summarized for use in the application
+Individual Files from the Transportation Bureau were consolidated and summarized for use in the application.  See full code in the repository.  Links on last slide.
+
 
 ```r
-library(dplyr)
-
-dfFlightData <- NULL
-for(i in 1:13){
-        f.path <- file.path(getwd(), paste0("902002334_T_ONTIME "
-                ,"(", as.character(i),")"), "902002334_T_ONTIME.csv")
-        dfFlights <- read.csv(f.path)
-        if(is.data.frame(dfFlightData)){
-                dfFlightData <- rbind(dfFlights, dfFlightData)
-        }
-        else { dfFlightData <- dfFlights }
-}
+f.path <- file.path("..", "..", "developingdataproducts", "final_project", "FlightExplorer", "FlightSummaryData.csv" )
+dfFlightSummary <- read.csv(f.path)
+str(dfFlightSummary)
 ```
 
----
-
-### Summarized Flight Data (Continued)
-
-```r
-dfAirlines <- read.csv("L_AIRLINE_ID.csv")
-names(dfAirlines) <- c("AIRLINE_ID", "AIRLINE_NAME")
-
-dfFlightData <- merge(dfFlightData, dfAirlines, by.x = "AIRLINE_ID", 
-                      by.y = "AIRLINE_ID")
-dfFlightData <- dfFlightData %>% select(MONTH, DAY_OF_WEEK, AIRLINE_NAME, 
-                FL_NUM, ORIGIN_CITY_NAME, DEST_CITY_NAME, ARR_DELAY_NEW, CANCELLED)
-dfFlightSummary <- dfFlightData %>% group_by(MONTH, DAY_OF_WEEK, AIRLINE_NAME, 
-                FL_NUM, ORIGIN_CITY_NAME, DEST_CITY_NAME)
-dfFlightSummary <- summarize(dfFlightSummary, 
-                             avg_delay = round(mean(ARR_DELAY_NEW, na.rm = TRUE),0), 
-                             pct_cancelled = round(100 * mean(CANCELLED, na.rm = TRUE),0))
-write.csv(dfFlightSummary, "FlightSummaryData.csv", row.names = FALSE)
 ```
-
+## 'data.frame':	1833309 obs. of  8 variables:
+##  $ MONTH           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ DAY_OF_WEEK     : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ AIRLINE_NAME    : Factor w/ 12 levels "Alaska Airlines Inc.: AS",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ FL_NUM          : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ ORIGIN_CITY_NAME: Factor w/ 315 levels "Aberdeen, SD",..: 302 273 302 273 302 176 209 273 221 273 ...
+##  $ DEST_CITY_NAME  : Factor w/ 312 levels "Aberdeen, SD",..: 272 300 272 300 176 300 272 210 272 221 ...
+##  $ avg_delay       : int  16 8 5 28 28 21 17 40 15 0 ...
+##  $ pct_cancelled   : int  0 0 0 0 0 0 0 0 0 0 ...
+```
 
 ---
 

@@ -66,7 +66,7 @@
   <article data-timings="">
     <p>Behind and intuitive user interface, Flight Explorer uses transportation bureau data from the prior 12 months to give you the information you need to have delay free travel.</p>
 
-<p><img src="FlightExplorer.PNG" alt="image"></p>
+<p><img src="FlightExplorer.PNG" alt="Flight Explorer UI"></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -77,20 +77,22 @@
     <h2>Summarized Flight Data</h2>
   </hgroup>
   <article data-timings="">
-    <p>Individual Files from the Transportation Bureau were consolidated and summarized for use in the application</p>
+    <p>Individual Files from the Transportation Bureau were consolidated and summarized for use in the application.  See full code in the repository.  Links on last slide.</p>
 
-<pre><code class="r">library(dplyr)
+<pre><code class="r">f.path &lt;- file.path(&quot;..&quot;, &quot;..&quot;, &quot;developingdataproducts&quot;, &quot;final_project&quot;, &quot;FlightExplorer&quot;, &quot;FlightSummaryData.csv&quot; )
+dfFlightSummary &lt;- read.csv(f.path)
+str(dfFlightSummary)
+</code></pre>
 
-dfFlightData &lt;- NULL
-for(i in 1:13){
-        f.path &lt;- file.path(getwd(), paste0(&quot;902002334_T_ONTIME &quot;
-                ,&quot;(&quot;, as.character(i),&quot;)&quot;), &quot;902002334_T_ONTIME.csv&quot;)
-        dfFlights &lt;- read.csv(f.path)
-        if(is.data.frame(dfFlightData)){
-                dfFlightData &lt;- rbind(dfFlights, dfFlightData)
-        }
-        else { dfFlightData &lt;- dfFlights }
-}
+<pre><code>## &#39;data.frame&#39;:    1833309 obs. of  8 variables:
+##  $ MONTH           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ DAY_OF_WEEK     : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ AIRLINE_NAME    : Factor w/ 12 levels &quot;Alaska Airlines Inc.: AS&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ FL_NUM          : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ ORIGIN_CITY_NAME: Factor w/ 315 levels &quot;Aberdeen, SD&quot;,..: 302 273 302 273 302 176 209 273 221 273 ...
+##  $ DEST_CITY_NAME  : Factor w/ 312 levels &quot;Aberdeen, SD&quot;,..: 272 300 272 300 176 300 272 210 272 221 ...
+##  $ avg_delay       : int  16 8 5 28 28 21 17 40 15 0 ...
+##  $ pct_cancelled   : int  0 0 0 0 0 0 0 0 0 0 ...
 </code></pre>
 
   </article>
@@ -98,30 +100,6 @@ for(i in 1:13){
 </slide>
 
 <slide class="" id="slide-4" style="background:;">
-  <hgroup>
-    <h3>Summarized Flight Data (Continued)</h3>
-  </hgroup>
-  <article data-timings="">
-    <pre><code class="r">dfAirlines &lt;- read.csv(&quot;L_AIRLINE_ID.csv&quot;)
-names(dfAirlines) &lt;- c(&quot;AIRLINE_ID&quot;, &quot;AIRLINE_NAME&quot;)
-
-dfFlightData &lt;- merge(dfFlightData, dfAirlines, by.x = &quot;AIRLINE_ID&quot;, 
-                      by.y = &quot;AIRLINE_ID&quot;)
-dfFlightData &lt;- dfFlightData %&gt;% select(MONTH, DAY_OF_WEEK, AIRLINE_NAME, 
-                FL_NUM, ORIGIN_CITY_NAME, DEST_CITY_NAME, ARR_DELAY_NEW, CANCELLED)
-dfFlightSummary &lt;- dfFlightData %&gt;% group_by(MONTH, DAY_OF_WEEK, AIRLINE_NAME, 
-                FL_NUM, ORIGIN_CITY_NAME, DEST_CITY_NAME)
-dfFlightSummary &lt;- summarize(dfFlightSummary, 
-                             avg_delay = round(mean(ARR_DELAY_NEW, na.rm = TRUE),0), 
-                             pct_cancelled = round(100 * mean(CANCELLED, na.rm = TRUE),0))
-write.csv(dfFlightSummary, &quot;FlightSummaryData.csv&quot;, row.names = FALSE)
-</code></pre>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-5" style="background:;">
   <hgroup>
     <h2>May All Your Flights be Delay-Free</h2>
   </hgroup>
@@ -163,14 +141,8 @@ write.csv(dfFlightSummary, &quot;FlightSummaryData.csv&quot;, row.names = FALSE)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Summarized Flight Data (Continued)'>
+        data-slide=4 title='May All Your Flights be Delay-Free'>
          4
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='May All Your Flights be Delay-Free'>
-         5
       </a>
     </li>
   </ul>
